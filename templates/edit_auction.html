@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title>EkList - Editing description - {{ auction.title }}</title>
+</head>
+<body>
+    <h1>EkList</h1>
+    <a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}EkList Hemsida{% else %}EkList Homepage{% endif %}</a><br/>
+    <h3>{{ auction.title }}</h3>
+     <form action="{% url 'edit' auction_id=auction.id %}" method="post">{% csrf_token %}
+         <b>{% if language == "sv_SE" %}Beskrivning: {% else %}Description: {% endif %}<br/></b>
+         <textarea title="description" name="description" rows="15" cols="40" required>{{ auction.description }}</textarea><br/>
+        <input type="submit" value="{% if language == "sv_SE" %}Godkänn{% else %}Submit{% endif %}">
+     </form>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>{% if language == "sv_SE" %}EkList - En Auktionssajt Till{% else %}EkList - Yet Another Auction Site{% endif %}</title>
+</head>
+<body>
+    <h1>EkList</h1>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <p>
+            {% if language == "sv_SE" %}
+                Välkommen, <a href="{% url 'profile_page' username=user.get_username %}" class="button">{{ user.get_username }}.</a><br/>
+            {% else %}
+                Welcome, <a href="{% url 'profile_page' username=user.get_username %}" class="button">{{ user.get_username }}.</a><br/>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="button">{% if language == "sv_SE" %}Logga ut{% else %}Logout{% endif %}</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{% url 'login' %}" class="button">{% if language == "sv_SE" %}Logga in{% else %}Log in{% endif %}</a>
+            <a href="{% url 'register' %}" class="button">{% if language == "sv_SE" %}Skapa konto{% else %}Register{% endif %}</a>
+        </p>
+    {% endif %}
+        <form action="{% url 'search' %}" method="post">{% csrf_token %}
+            <p><input type="search" title="search_term" name="search_term"> <input type="submit" value="{% if language == "sv_SE" %}Sök{% else %}Search{% endif %}"></p>
+        </form>
+        {% if search_term %}
+            <a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}Hem{% else %}Home{% endif %}</a><br/>
+            <h3>{% if language == "sv_SE" %}Sökresultat{% else %}Search results{% endif %}</h3>
+        {% else %}
+            <a href="{% url 'create' %}" class="button">{% if language == "sv_SE" %}Skapa ny auktion{% else %}Create auction listing{% endif %}</a>
+            <h3>{% if language == "sv_SE" %}Aktiva auktioner{% else %}Active auctions{% endif %}</h3>
+        {% endif %}
+    {% for auction in auctions %}
+        <b><a href="{% url 'auction' auction_id=auction.id %}">{{ auction.title }}</a></b><br/>
+        <p> {% if language == "sv_SE" %}
+                {% if auction.has_bid %}Nuvarande pris: {{ auction.current_bid }}{% else %}Minsta pris: {{ auction.minimum_bid }}{% endif %} EUR
+            {% else %}
+                {% if auction.has_bid %}Current bid: {{ auction.current_bid }}{% else %}Minimum bid: {{ auction.minimum_bid }}{% endif %} EUR
+            {% endif %}
+        </p>
+        <p>{% if language == "sv_SE" %}Utgår: {% else %}Expires: {% endif %}{{ auction.expires }}</p>
+    {% endfor %}
+    <div class="pagination">
+        <br/>
+        <span class="step-links">
+            {% if auctions.has_previous %}
+                <a href="?page={{ auctions.previous_page_number }}{% if search_term %}&search_term={{ search_term }}{% endif %}">{% if language == "sv_SE" %}Föregående{% else %}Previous{% endif %}</a>
+            {% endif %}
+
+            <span class="current">
+                {% if language == "sv_SE" %}Sid {{ auctions.number }} av {{ auctions.paginator.num_pages }}.{% else %}Page {{ auctions.number }} of {{ auctions.paginator.num_pages }}.{% endif %}
+            </span>
+
+            {% if auctions.has_next %}
+                <a href="?page={{ auctions.next_page_number }}{% if search_term %}&search_term={{ search_term }}{% endif %}">{% if language == "sv_SE" %}Nästa{% else %}Next{% endif %}</a>
+            {% endif %}
+        </span>
+    </div>
+    <br/>
+    {% if not search_term %}
+        <a href="{% url 'language' %}?next={% url 'home' %}" class="button">{% if language == "sv_SE" %}In English{% else %}På Svenska{% endif %}</a>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>{% if language == "sv_SE" %}EkList - En Auktionssajt Till{% else %}EkList - Yet Another Auction Site{% endif %}</title>
+</head>
+<body>
+    <h1>EkList</h1>
+    <a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}EkList Hemsida{% else %}EkList Homepage{% endif %}</a><br/>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>
+        <b>{% if language == "sv_SE" %}Titel: {% else %}Title: {% endif %}<br/></b>
+        {{ auction.title }}
+    </p>
+    <p>
+        <b>{% if language == "sv_SE" %}Beskrivning: {% else %}Description: {% endif %}<br/></b>
+        {{ auction.description }}
+    </p>
+    <p>
+        <b>{% if language == "sv_SE" %}Minimibud: {% else %}Minimum Bid: {% endif %}<br/></b>
+        {{ auction.minimum_bid }} EUR
+    </p>
+    <p>
+        Deadline: <br/>
+        <input type="datetime-local" title="expires" name="expires" value="{{ auction.expires }}" readonly>
+    </p>
+    <h3>{% if language == "sv_SE" %}Är detta OK?{% else %}Is this correct?{% endif %}</h3>
+    <form action="{% url 'create' %}" method="post">{% csrf_token %}
+        <input type="hidden" title="title" name="title" value="{{ auction.title }}">
+        <input type="hidden" title="description" name="description" value="{{ auction.description }}">
+        <input type="hidden" title="minimum_bid" name="minimum_bid" value="{{ auction.minimum_bid }}">
+        <input type="hidden" title="expires" name="expires" value="{{ auction.expires }}">
+        <input type="submit" value="{% if language == "sv_SE" %}Ja{% else %}Yes{% endif %}">
+    </form>
+    <form action="{% url 'create' %}" method="get">{% csrf_token %}
+        <input type="hidden" title="title" name="title" value="{{ auction.title }}">
+        <input type="hidden" title="description" name="description" value="{{ auction.description }}">
+        <input type="hidden" title="minimum_bid" name="minimum_bid" value="{{ auction.minimum_bid }}">
+        <input type="hidden" title="expires" name="expires" value="{{ auction.expires }}">
+        <input type="submit" value="{% if language == "sv_SE" %}Nej{% else %}No{% endif %}">
+    </form>
+</body>
+</html>

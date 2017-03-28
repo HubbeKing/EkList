@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>{% if language == "sv_SE" %}EkList Inloggning{% else %}EkList Login{% endif %}</title>
+</head>
+<body>
+    <h1>{% if language == "sv_SE" %}EkList Inloggning{% else %}EkList Login{% endif %}</h1>
+    <a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}EkList Hemsida{% else %}EkList Homepage{% endif %}</a><br/>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form action="{% url 'login' %}?next={{ next }}" method="post">{% csrf_token %}
+        <p>{% if language == "sv_SE" %}Användarnamn: {% else %}Username: {% endif %}<input type="text" title="username" name="username"></p>
+        <p>{% if language == "sv_SE" %}Lösenord: {% else %}Password: {% endif %}<input type="password" title="password" name="password"></p>
+        <input type="submit" value="{% if language == "sv_SE" %}Logga In{% else %}Login{% endif %}">
+        <a href="{% url 'password_reset' %}">{% if language == "sv_SE" %}Glömt lösenordet?{% else %}Forgot password?{% endif %}</a>
+    </form>
+</body>
+</html>

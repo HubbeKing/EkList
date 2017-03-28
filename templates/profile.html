@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title>EkList - User Profile Page For {{ user.username }}</title>
+</head>
+<body>
+<h1>EkList</h1>
+<a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}EkList Hemsida{% else %}EkList Homepage{% endif %}</a><br/>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<form action="{% url 'profile_page' username=user.username %}" method="post">{% csrf_token %}
+    {% if language == "sv_SE" %}
+        Välkommen, {{ user.username }}!<br/>
+        Din e-post adress är <input type="email" title="email" name="email" value="{{ user.email }}">
+    {% else %}
+        Welcome, {{ user.username }}!<br/>
+        Your email address is <input type="email" title="email" name="email" value="{{ user.email }}">
+    {% endif %}
+    <input type="submit" value="{% if language == "sv_SE" %}Byt{% else %}Change{% endif %}">
+</form>
+    <a href="{% url 'password_change' %}">{% if language == "sv_SE" %}Byt Lösenord{% else %}Change Password{% endif %}</a><br/><br/>
+<b>{% if language == "sv_SE" %}Dina Auktioner:{% else %}Your Auctions:{% endif %}</b><br/><br/>
+{% for auction in auctions %}
+    <a href="{% url 'auction' auction_id=auction.id %}">{{ auction.title }}</a><br/>
+    <p>{% if language == "sv_SE" %}Utgår: {% else %}Expires: {% endif %}{{ auction.expires }}</p><br/>
+{% endfor %}
+<div class="pagination">
+    <br/>
+        <span class="step-links">
+            {% if auctions.has_previous %}
+                <a href="?page={{ auctions.previous_page_number }}">{% if language == "sv_SE" %}Föregående{% else %}Previous{% endif %}</a>
+            {% endif %}
+
+            <span class="current">
+                {% if language == "sv_SE" %}Sid {{ auctions.number }} av {{ auctions.paginator.num_pages }}.{% else %}Page {{ auctions.number }} of {{ auctions.paginator.num_pages }}.{% endif %}
+            </span>
+
+            {% if auctions.has_next %}
+                <a href="?page={{ auctions.next_page_number }}">{% if language == "sv_SE" %}Nästa{% else %}Next{% endif %}</a>
+            {% endif %}
+        </span>
+</div>
+    <br/>
+    <a href="{% url 'language' %}?next={% url 'profile_page' username=user.username %}" class="button">{% if language == "sv_SE" %}Switch to English{% else %}Byt till Svenska{% endif %}</a>
+</body>
+</html>

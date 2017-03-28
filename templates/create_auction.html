@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>{% if language == "sv_SE" %}EkList - En Auktionssajt Till{% else %}EkList - Yet Another Auction Site{% endif %}</title>
+</head>
+<body>
+    <h1>EkList</h1>
+    <a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}EkList Hemsida{% else %}EkList Homepage{% endif %}</a><br/>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form action="{% url 'verify' %}" method="post">{% csrf_token %}
+        <p>
+            <b>{% if language == "sv_SE" %}Titel: {% else %}Title: {% endif %}<br/></b>
+            <input type="text" title="title" name="title" value="{{ auction.title }}" required>
+        </p>
+        <p>
+            <b>{% if language == "sv_SE" %}Beskrivning: {% else %}Description: {% endif %}<br/></b>
+            <textarea title="description" name="description" rows="15" cols="40" required>{{ auction.description }}</textarea>
+        </p>
+        <p>
+            <b>{% if language == "sv_SE" %}Minimibud: {% else %}Minimum Bid: {% endif %}<br/></b>
+            <input type="number" title="minimum_bid" name="minimum_bid" value="{{ auction.minimum_bid }}" required> EUR
+        </p>
+        <p>
+            <b>Deadline: <br/></b>
+            <input type="datetime-local" title="expires" name="expires" value="{{ auction.expires }}" required><br/>
+            Please enter time using 24-hour time.
+        </p>
+        <h4>{% if language == "sv_SE" %}OBS! Deadline bör vara minst 72 timmar framåt.{% else %}NOTE! Deadline must be at least 72 hours in the future.{% endif %}</h4>
+        <input type="submit" value="{% if language == "sv_SE" %}Godkänn{% else %}Submit{% endif %}">
+    </form>
+</body>
+</html>

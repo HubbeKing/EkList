@@ -1,0 +1,43 @@
+<html>
+<head>
+    <title>EkList - {{ auction.title }} - {% if auction.has_bid %}{{ auction.current_bid }}{% else %}{{ auction.minimum_bid }}{% endif %} EUR</title>
+</head>
+<body>
+    <h1>EkList</h1>
+    <a href="{% url 'home' %}" class="button">{% if language == "sv_SE" %}EkList Hemsida{% else %}EkList Homepage{% endif %}</a><br/>
+    {% if perms.EkList.ban_auction %}
+        <form action="{% url 'ban' auction_id=auction.id %}" method="post">{% csrf_token %}
+            <input type="submit" value="Ban this auction">
+        </form>
+    {% endif %}
+    <h3>{{ auction.title }}</h3>
+    <p>{{ auction.description }}</p>
+    {% if request.user.is_authenticated %}
+        {% if request.user.get_username == auction.creator_username %}
+            <a href="{% url 'edit' auction_id=auction.id %}">{% if language == "sv_SE" %}Ändra beskrivning{% else %}Edit description{% endif %}</a>
+        {% endif %}
+    {% endif %}
+    <p>{% if language == "sv_SE" %}
+        Minsta pris: {{ auction.minimum_bid }} EUR<br/>
+        Nuvarande pris: {{ auction.current_bid }} EUR
+        {% else %}
+        Minimum bid: {{ auction.minimum_bid }} EUR<br/>
+        Current bid: {{ auction.current_bid }} EUR
+        {% endif %}
+    <p>{% if language == "sv_SE" %}Tid kvar: {% else %}Time remaining: {% endif %}{{ time_remaining }}</p>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form action="{% url 'bid' auction_id=auction.id %}" method="post">{% csrf_token %}
+        <p>
+            <input type="hidden" title="description" name="description" value="{{ auction.description }}">
+            <input type="number" title="bid_amount" name="bid_amount"> EUR
+            <input type="submit" value="{% if language == "sv_SE" %}Ge bud{% else %}Post bid{% endif %}">
+        </p>
+    </form>
+</body>
+</html>
